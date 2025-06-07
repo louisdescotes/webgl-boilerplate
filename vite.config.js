@@ -1,35 +1,33 @@
-import { defineConfig } from 'vite';
-import path from 'path';
-import glsl from 'vite-plugin-glsl';
+import path from 'path'
+import glsl from 'vite-plugin-glsl'
+import restart from 'vite-plugin-restart'
 
-
-export default defineConfig({
-  plugins: [glsl()],
-  root: '.',
+export default {
+  root: 'src/',
+  publicDir: '../static/',
   base: './',
+  server: {
+    host: true,
+    open: !('SANDBOX_URL' in process.env || 'CODESANDBOX_HOST' in process.env)
+  },
   build: {
-    outDir: 'dist',
+    outDir: '../dist',
     emptyOutDir: true,
+    sourcemap: true
   },
   resolve: {
     alias: {
-      '@app': path.resolve(__dirname, './app'),
-      '@fonts': path.resolve(__dirname, './fonts'),
-      '@shared': path.resolve(__dirname, './shared'),
-      '@styles': path.resolve(__dirname, './styles'),
-      '@animations': path.resolve(__dirname, './app/animations'),
-      '@classes': path.resolve(__dirname, './app/classes'),
-      '@components': path.resolve(__dirname, './app/components'),
-      '@pages': path.resolve(__dirname, './app/pages'),
-      '@shaders': path.resolve(__dirname, './app/shaders'),
-      '@utils': path.resolve(__dirname, './app/utils'),
-    },
+      '@utils': path.resolve(__dirname, 'src/utils'),
+      '@components': path.resolve(__dirname, 'src/components'),
+      '@styles': path.resolve(__dirname, 'src/styles'),
+      '@shaders': path.resolve(__dirname, 'src/shaders'),
+      '@animations': path.resolve(__dirname, 'src/animations'),
+      '@classes': path.resolve(__dirname, 'src/classes'),
+      '@assets': path.resolve(__dirname, 'src/assets'),
+    }
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@import "./styles/index.scss";`
-      },
-    },
-  },
-});
+  plugins: [
+    glsl(),
+    restart({ restart: ['../static/**'] })
+  ]
+}
